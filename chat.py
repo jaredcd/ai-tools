@@ -1,15 +1,11 @@
 from collections import namedtuple
 import os
 import json
+import ai_helper
 import openai
 
 
 State = namedtuple("State", ["name", "messages", "model"])
-
-
-def load_key():
-    with open('.secret', mode='r') as file:
-        openai.api_key = file.read()
 
 
 def get_default_context():
@@ -70,7 +66,7 @@ def process_command(command: str, state: State):
 
 
 def main():
-    load_key()
+    ai_helper.load_key()
     state = State("default", get_default_context(), "gpt-3.5-turbo")
 
     while True:
