@@ -34,6 +34,11 @@ def read_convo(name: str):
 
 
 def write_convo(name: str, data: list):
+    try:
+        os.makedirs("conversations")
+    except FileExistsError:
+        pass
+
     with open(f'conversations/{name}.json', 'w') as f:
         json.dump(data, f)
 
@@ -48,10 +53,10 @@ def process_command(command: str, state: State):
             messages = read_convo(conversation_name)
             name = conversation_name
         case ["/save", conversation_name]:
-            write_convo(conversation_name)
+            write_convo(conversation_name, messages)
             name = conversation_name
         case ["/save"]:
-            write_convo(name)
+            write_convo(name, messages)
         case ["/info"]:
             print(f'Conversation: {name}, Model: {model}')
         case ["/list"]:
