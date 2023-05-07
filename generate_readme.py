@@ -11,16 +11,21 @@ def get_repo_src(directory: str):
     repo = Repo(directory)
     filenames = repo.git.ls_tree("--full-tree", "--name-only", "-r", "HEAD")
     filenames = filenames.split("\n")
-    print(f'Tracked files: \n{filenames}\n')
+    lfs_files = repo.git.lfs("ls-files", "-all", "--name-only")
+    lfs_files = lfs_files.split("\n")
 
     src_data = ""
     for filename in filenames:
-        if filename == "README.md":
+        if filename in lfs_files or filename == "README.md":
             continue
 
-        with open(filename, mode='r') as file:
-            contents = file.read()
-            src_data += f'---\n{filename}:\n---\n{contents}\n\n'    
+        try:
+            with open(f'{directory}/{filename}', mode='r') as file:
+                contents = file.read()
+                src_data += f'---\n{filename}:\n---\n{contents}\n\n'
+                print(f"Added {len(contents)} chars from {directory}/{filename}")
+        except:
+            pass
 
     return src_data
 

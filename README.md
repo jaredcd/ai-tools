@@ -1,31 +1,66 @@
-# Chat Assistant
+# AI Chatbot & Repo README Generator
 
-This repository contains a simple chat assistant that communicates with OpenAI's models to provide you with human-like interactions. It also provides functionality to load, save, and manage the conversation context.
+This repository contains two main applications: an AI Chatbot and a README Generator for repositories.
 
-## Requirements
+## AI Chatbot
 
-- Python 3.8 or above
-- An OpenAI API key
+The AI Chatbot is a simple command-line-based chatbot powered by OpenAI's GPT-3.5-turbo model. You can interact with the chatbot and save/load entire conversations.
 
-## Installation
+### Setup
 
-1. Clone the repo
-2. Run `pip install -r requirements.txt` to install the required dependencies
-3. Set up a .secret file containing your OpenAI API key
+Make sure you have Python 3.6 or above installed. Then run:
 
-## Usage
+```
+pip install -r requirements.txt
+```
 
-Run the `chat.py` script to interact with the chat assistant. The script provides various commands to interact with the GPT-3 model and manage conversations:
+Place your OpenAI API key in a `.secret` file in the root directory of the project.
+
+### Running
+
+Run the chatbot with:
+
+```
+python chat.py
+```
+
+You can type messages to interact with the chatbot. To use special commands, type a forward slash `/` followed by the command name:
 
 - `/load <conversation_name>`: Load an existing conversation by its name
 - `/save [conversation_name]`: Save the current conversation. If a conversation name is provided, it saves the conversation using the new name
 - `/model <model_name>`: Select GPT-3 model to use, e.g., `gpt-3.5-turbo`
 - `/info`: Print current conversation name and model
 - `/list`: List existing saved conversations
-- `/exit`: Exit the chat assistant
+- `/exit`: Exit the chatbot
 
-Finally, the `generate_readme.py` script demonstrates an example of using GPT-4 to automatically generate a README.md file for a repository, based on its content.
+## Repo README Generator
+
+The Repo README Generator is a script that uses GPT-4 to generate a README file for a given repository. It takes the entire source code of the repository as input and creates a totally new README file.
+
+### Setup
+
+Make sure you have Python 3.6 or above installed. Then run:
+
+```
+pip install -r requirements.txt
+```
+
+Remember to place your OpenAI API key in a `.secret` file in the root directory of the project.
+
+### Running
+
+To run the README generator, use:
+
+```
+python generate_readme.py [directory]
+```
+
+Replace `[directory]` with the path to the repository. If no directory argument is given, it defaults to the current working directory.
+
+The script will analyze the repository source code and write a generated `README.md` file to the repository's root directory.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE.md).
+Copyright (c) 2023 Jared Dominguez
+
+This software is released under the MIT License. For full details, see [LICENSE.md](LICENSE.md).
