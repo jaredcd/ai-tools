@@ -5,7 +5,7 @@ const API_URL = "https://api.openai.com/v1/chat/completions";
 
 const listenerMiddleware = createListenerMiddleware();
 
-const generate = async (messages, apiKey, streamChunk) => {
+const generate = async (model, messages, apiKey, streamChunk) => {
 
     try {
         // Fetch the response from the OpenAI API with the signal from AbortController
@@ -16,8 +16,8 @@ const generate = async (messages, apiKey, streamChunk) => {
                 Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: messages,
+                model,
+                messages,
                 stream: true,
             }),
         });
@@ -59,7 +59,7 @@ listenerMiddleware.startListening({
     actionCreator: submitMessage,
     effect: async (action, listenerApi) => {
         const state = listenerApi.getState();
-        const { apiKey } = state.app;
+        const { apiKey, model } = state.app;
         const { conversation } = action.payload;
 
         if (!(conversation in state.app.conversations)) return;
@@ -79,7 +79,7 @@ listenerMiddleware.startListening({
                 listenerApi.dispatch(streamMessageChunk(chunk));
             };
 
-            await generate(messages, apiKey, streamChunk);
+            await generate(model, messages, apiKey, streamChunk);
 
             listenerApi.dispatch(endStream());
         });

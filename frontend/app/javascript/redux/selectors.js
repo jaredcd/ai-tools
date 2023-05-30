@@ -2,6 +2,10 @@ export const apiKeySelector = (state) => {
     return state.app.apiKey;
 };
 
+export const apiModelSelector = (state) => {
+    return state.app.model;
+};
+
 export const conversationNameListSelector = (state) => {
     if (!state.app.conversations) return [];
     return Object.keys(state.app.conversations);

@@ -10,6 +10,7 @@ export const appSlice = createSlice({
     name: 'app',
     initialState: {
         apiKey: "",
+        model: "gpt-3.5-turbo",
         conversations: {},
         selectedConversation: "",
         streamingConversation: "",
@@ -18,6 +19,9 @@ export const appSlice = createSlice({
     reducers: {
         setAPIKey(state, action) {
             state.apiKey = action.payload;
+        },
+        setAPIModel(state, action) {
+            state.model = action.payload;
         },
         createConversation(state, action) {
             state.conversations[action.payload] = createEmptyConversation();
@@ -59,6 +63,6 @@ export const appSlice = createSlice({
 });
 
 
-export const { setAPIKey, createConversation, deleteConversation, selectConversation, submitMessage, startMessage, streamMessageChunk, endStream } = appSlice.actions;
+export const { setAPIKey, setAPIModel, createConversation, deleteConversation, selectConversation, submitMessage, startMessage, streamMessageChunk, endStream } = appSlice.actions;
 
 export default appSlice.reducer;

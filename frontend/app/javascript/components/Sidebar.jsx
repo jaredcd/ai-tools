@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setAPIKey, createConversation, selectConversation, deleteConversation } from '../redux/appSlice';
+import { setAPIKey, createConversation, selectConversation, deleteConversation, setAPIModel } from '../redux/appSlice';
 import {
     PlusOutlined,
     SettingOutlined,
     DeleteOutlined,
 } from '@ant-design/icons';
-import { Button, Modal, Menu, Layout, Input, Divider, Space } from 'antd';
-import { apiKeySelector, conversationNameListSelector, selectedConversationSelector } from '../redux/selectors';
+import { Button, Modal, Menu, Layout, Input, Divider, Space, Radio } from 'antd';
+import { apiKeySelector, apiModelSelector, conversationNameListSelector, selectedConversationSelector } from '../redux/selectors';
 
 const { Header, Footer, Content } = Layout;
 
@@ -71,6 +71,8 @@ const MenuLabel = ({ label, conversation }) => {
 };
 
 const Sidebar = () => {
+    const dispatch = useDispatch();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const persistedKey = useSelector(apiKeySelector);
     const [keyText, setKeyText] = useState(persistedKey);
@@ -82,7 +84,11 @@ const Sidebar = () => {
     const selectedConversation = useSelector(selectedConversationSelector);
     const selectedMenuKeys = selectedConversation ? [selectedConversation] : [];
 
-    const dispatch = useDispatch();
+    const selectedModel = useSelector(apiModelSelector);
+
+    const onModelChange = (e) => {
+        dispatch(setAPIModel(e.target.value));
+    };
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -148,13 +154,22 @@ const Sidebar = () => {
                 onOk={handleOk}
                 onCancel={handleCancel}
             >
+                <Space direction="vertical">
+
+                Model
+                <Radio.Group onChange={onModelChange} value={selectedModel}>
+                    <Radio value={"gpt-3.5-turbo"}>gpt-3.5-turbo</Radio>
+                    <Radio value={"gpt-4"}>gpt-4</Radio>
+                </Radio.Group>
+
                 OpenAI API Key
                 <Input.Password
                     placeholder='Paste key here...'
                     onChange={(e) => setKeyText(e.target.value)}
                     value={keyText || ''}
                     onPressEnter={handleOk}
-                />
+                    />
+                </Space>
             </Modal>
             <Modal
                 title="Create Conversation"
