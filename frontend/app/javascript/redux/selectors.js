@@ -24,3 +24,9 @@ export const selectedConversationMessagesSelector = (state) => {
     const conversation = state.app.conversations[selectedConversationName];
     return conversation.messages;
 };
+
+export const canSendMessageSelector = (state) => {
+    const { streamingIndex } = state.app;
+    if (!streamingIndex) return true;
+    return streamingIndex == -1;
+};

@@ -1,7 +1,11 @@
-import { Avatar, List } from 'antd';
+import { List } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectedConversationMessagesSelector } from '../redux/selectors';
+
+const listStyle = {
+  whiteSpace: "pre-line",
+};
 
 const Messages = () => {
   const messages = useSelector(selectedConversationMessagesSelector);
@@ -11,11 +15,11 @@ const Messages = () => {
       itemLayout="horizontal"
       dataSource={messages}
       renderItem={(item, index) => (
-        <List.Item>
+        <List.Item style={listStyle}>
           <List.Item.Meta
-            title={item.role}
-            description={item.content}
+            description={item.role}
           />
+          {item.content}
         </List.Item>
       )}
     />

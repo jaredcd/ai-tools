@@ -1,11 +1,11 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit'
-import { submitMessage, pushMessage } from './appSlice';
+import { submitMessage, startMessage, endStream, streamMessageChunk } from './appSlice';
 
 const API_URL = "https://api.openai.com/v1/chat/completions";
 
 const listenerMiddleware = createListenerMiddleware();
 
-const generate = async (messages, apiKey) => {
+const generate = async (messages, apiKey, streamChunk) => {
 
     try {
         // Fetch the response from the OpenAI API with the signal from AbortController
@@ -16,16 +16,42 @@ const generate = async (messages, apiKey) => {
                 Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-                model: "gpt-4",
+                model: "gpt-3.5-turbo",
                 messages: messages,
+                stream: true,
             }),
         });
 
-        const data = await response.json();
-        return data.choices[0].message.content;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+                break;
+            }
+            // Massage and parse the chunk of data
+            const chunk = decoder.decode(value);
+            const lines = chunk.split("\n\n");
+            const parsedLines = lines
+                .map((line) => line.replace(/^data: /, "").trim()) // Remove the "data: " prefix
+                .filter((line) => line !== "" && line !== "[DONE]") // Remove empty lines and "[DONE]"
+                .map((line) => {
+                    return JSON.parse(line);
+                }); // Parse the JSON string
+
+            for (const parsedLine of parsedLines) {
+                const { choices } = parsedLine;
+                const { delta } = choices[0];
+                const { content } = delta;
+                // Update the UI with the new content
+                if (content) {
+                    streamChunk(content);
+                }
+            }
+        }
     } catch (error) {
         console.error("Error:", error);
-        return undefined;        
     }
 };
 
@@ -34,28 +60,28 @@ listenerMiddleware.startListening({
     effect: async (action, listenerApi) => {
         const state = listenerApi.getState();
         const { apiKey } = state.app;
-        const { conversation, message } = action.payload;
+        const { conversation } = action.payload;
 
         if (!(conversation in state.app.conversations)) return;
         const { messages } = state.app.conversations[conversation];
-        const context = messages.concat(message);
 
         const task = listenerApi.fork(async (forkApi) => {
-            const response = await generate(context, apiKey);
-            if (!response) {
-                //dispatch error message
-                return;
-            }
-
             const newMessage = {
                 conversation,
                 message: {
                     role: "assistant",
-                    content: response
+                    content: ""
                 }
             };
-            console.log(newMessage);
-            listenerApi.dispatch(pushMessage(newMessage));
+            listenerApi.dispatch(startMessage(newMessage));
+
+            const streamChunk = (chunk) => {
+                listenerApi.dispatch(streamMessageChunk(chunk));
+            };
+
+            await generate(messages, apiKey, streamChunk);
+
+            listenerApi.dispatch(endStream());
         });
     },
 });
