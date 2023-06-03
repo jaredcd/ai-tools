@@ -12,6 +12,10 @@ export const conversationNameListSelector = (state) => {
 };
 
 export const selectedConversationSelector = (state) => {
+    if (!state.app.selectedConversation) {
+        return "";
+    }
+
     if (!(state.app.selectedConversation in state.app.conversations)) {
         return "";
     }
@@ -21,6 +25,10 @@ export const selectedConversationSelector = (state) => {
 
 export const selectedConversationMessagesSelector = (state) => {
     const selectedConversationName = state.app.selectedConversation;
+    if (!selectedConversationName) {
+        return [];
+    }
+
     if (!(selectedConversationName in state.app.conversations)) {
         return [];
     }

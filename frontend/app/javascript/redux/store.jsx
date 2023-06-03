@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import appReducer from './appSlice';
+import appReducer, { INITIAL_STATE } from './appSlice';
 import listenerMiddleware from './middleware';
 
 const persistedState = localStorage.getItem('reduxState')
@@ -8,6 +8,7 @@ const persistedState = localStorage.getItem('reduxState')
 
 const preloadedState = {
   app: {
+    ...INITIAL_STATE,
     ...persistedState.app,
     streamingIndex: -1,
     streamingConversation: "",

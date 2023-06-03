@@ -6,16 +6,18 @@ const createEmptyConversation = () => {
     };
 };
 
+export const INITIAL_STATE = {
+    apiKey: "",
+    model: "gpt-3.5-turbo",
+    conversations: {},
+    selectedConversation: "",
+    streamingConversation: "",
+    streamingIndex: -1,
+};
+
 export const appSlice = createSlice({
     name: 'app',
-    initialState: {
-        apiKey: "",
-        model: "gpt-3.5-turbo",
-        conversations: {},
-        selectedConversation: "",
-        streamingConversation: "",
-        streamingIndex: -1,
-    },
+    initialState: INITIAL_STATE,
     reducers: {
         setAPIKey(state, action) {
             state.apiKey = action.payload;
