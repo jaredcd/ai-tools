@@ -67,7 +67,7 @@ def process_command(command: str, state: State):
 
 def main():
     ai_helper.load_key()
-    state = State("default", get_default_context(), "gpt-3.5-turbo")
+    state = State("default", get_default_context(), "gpt-4o-mini")
 
     while True:
         prompt = input("user: ")
